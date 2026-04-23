@@ -13,13 +13,12 @@ pipeline {
     }
 }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}:v3")
-                }
-            }
-        }
+       stage('Build Docker Image') {
+    steps {
+        // Use bat for Windows or sh for Linux
+        bat 'docker build -t rishithas/lkj:latest .'
+    }
+}
 
         stage('Login to Docker Hub') {
             steps {
