@@ -21,16 +21,15 @@ pipeline {
 }
 
         stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: '4vv23is260',
-                    passwordVariable: 'Docker Hub Access Token'
-                )]) {
-                    bat 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                }
-            }
+    steps {
+        withCredentials([
+            string(credentialsId: 'Docker Hub Access Token', variable: 'DOCKER_PASS')
+        ]) {
+            // In Windows Batch, we use % to wrap variables
+            bat "echo %DOCKER_PASS% | docker login -u rishithas --password-stdin"
         }
+    }
+}
 
         stage('Push Docker Image') {
             steps {
