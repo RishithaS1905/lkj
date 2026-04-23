@@ -27,7 +27,7 @@ pipeline {
                     usernameVariable: '4vv23is260',
                     passwordVariable: 'Docker Hub Access Token'
                 )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    bat 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
