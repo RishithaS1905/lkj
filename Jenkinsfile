@@ -20,14 +20,18 @@ pipeline {
     }
 }
 
-        stage('Login to Docker Hub') {
+       stage('Login to Docker Hub') {
     steps {
-        withCredentials([
-            string(credentialsId: 'Docker Hub Access Token', variable: 'DOCKER_PASS')
-        ]) {
-            // In Windows Batch, we use % to wrap variables
+        // Double-check this ID matches the 'ID' field in Jenkins exactly!
+        withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASS')]) {
             bat "echo %DOCKER_PASS% | docker login -u rishithas --password-stdin"
         }
+    }
+}
+
+stage('Push Docker Image') {
+    steps {
+        bat "docker push rishithas/lkj:latest"
     }
 }
 
