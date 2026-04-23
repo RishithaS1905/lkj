@@ -1,57 +1,35 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "4vv23is260/myapp-image"
-    }
-
     stages {
-
-      stage('Clone Repository') {
-    steps {
-        git branch: 'main', url: 'https://github.com/RishithaS1905/lkj.git'
-    }
-}
-
-       stage('Build Docker Image') {
-    steps {
-        // Use bat for Windows or sh for Linux
-        bat 'docker build -t rishithas/lkj:latest .'
-    }
-}
-
-       stage('Login to Docker Hub') {
-    steps {
-        // Double-check this ID matches the 'ID' field in Jenkins exactly!
-        withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASS')]) {
-            bat "echo %DOCKER_PASS% | docker login -u rishithas --password-stdin"
-        }
-    }
-}
-
-stage('Push Docker Image') {
-    steps {
-        bat "docker push rishithas/lkj:latest"
-    }
-}
-
-        stage('Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('', 'dockerhub-creds') {
-                        docker.image("${DOCKER_IMAGE}:latest").push()
-                    }
+                bat 'docker build -t rishithas/lkj:latest .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                // Ensure 'docker-hub-creds' matches your actual Credential ID in Jenkins
+                withCredentials([string(credentialsId: 'docker-hub-creds', variable: 'DOCKER_PASS')]) {
+                    bat "echo %DOCKER_PASS% | docker login -u rishithas --password-stdin"
                 }
             }
         }
-    }
 
+        stage('Push Docker Image') {
+            steps {
+                bat 'docker push rishithas/lkj:latest'
+            }
+        }
+    }
+    
     post {
-        success {
-            echo 'Image successfully built and pushed to Docker Hub'
+        always {
+            echo 'Pipeline finished.'
         }
         failure {
-            echo 'Pipeline failed'
+            echo 'Pipeline failed. Check the logs above.'
         }
     }
 }
